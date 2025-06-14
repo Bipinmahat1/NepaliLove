@@ -52,7 +52,7 @@ Before installation, make sure you have:
 
 ```bash
 git clone https://github.com/Bipinmahat1/NepaliLove.git
-cd NepaliLove```
+cd NepaliLove```bash
 
 2. **Install dependencies:**
 
