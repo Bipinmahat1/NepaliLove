@@ -52,12 +52,12 @@ Before installation, make sure you have:
 
 ```bash
 git clone https://github.com/Bipinmahat1/NepaliLove.git
-cd NepaliLove
+cd NepaliLove```
 
 2. **Install dependencies:**
 
 ```bash
-npm install
+npm install```
 
 3. **Set up environment variables:**
 Create a .env file in the root directory and add:
@@ -66,7 +66,7 @@ Create a .env file in the root directory and add:
 
 4. **Start the Database (if needed):**
 ```bash
-npm run db:push
+npm run db:push```
 
 ▶️ Usage
 To start the app:
@@ -76,12 +76,12 @@ npm run dev:server
 
 # In a separate terminal, start frontend
 npm run dev:client
-Visit http://localhost:5173 to use the app.
+Visit http://localhost:5173 to use the app.```
 
 🧪 Testing
 Run the tests with:
 ```bash
-npm test
+npm test```
 
 ✨ Features
 🔐 OTP Auth using phone/email
