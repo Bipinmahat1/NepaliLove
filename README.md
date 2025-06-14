@@ -107,6 +107,7 @@ npm test
 
 
 🧱 Project Structure
+```bash
 NepaliLove/
 ├── client/                # Frontend (React)
 │   ├── pages/
@@ -120,7 +121,7 @@ NepaliLove/
 ├── .env.example
 ├── README.md
 ├── package.json
-
+```
 
 
 🤝 Contributing
@@ -137,7 +138,8 @@ Open a pull request 🚀
 📄 License
 Licensed under the MIT License.
 
--🔝 Return to Top
+### 🔝 [Return to Top](#installation)
+
 
 
 
