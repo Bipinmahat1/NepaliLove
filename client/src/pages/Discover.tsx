@@ -52,6 +52,26 @@ export default function Discover({ onMatch }: DiscoverProps) {
     },
   });
 
+  const favoriteMutation = useMutation({
+    mutationFn: async (favoriteUserId: string) => {
+      const response = await apiRequest("POST", "/api/favorites", { favoriteUserId });
+      return response.json();
+    },
+    onSuccess: (data) => {
+      toast({
+        title: data.isFavorite ? "Added to Favorites!" : "Removed from Favorites",
+        description: data.isFavorite ? "This person has been favorited." : "This person has been unfavorited.",
+      });
+    },
+    onError: () => {
+      toast({
+        title: "Error",
+        description: "Failed to process favorite. Please try again.",
+        variant: "destructive",
+      });
+    },
+  });
+
   const handleSwipe = (action: 'like' | 'pass') => {
     const currentProfile = profiles[currentIndex];
     if (currentProfile) {
@@ -64,6 +84,13 @@ export default function Discover({ onMatch }: DiscoverProps) {
 
   const handleCardSwipe = (direction: 'left' | 'right') => {
     handleSwipe(direction === 'right' ? 'like' : 'pass');
+  };
+
+  const handleFavorite = () => {
+    const currentProfile = profiles[currentIndex];
+    if (currentProfile) {
+      favoriteMutation.mutate(currentProfile.userId);
+    }
   };
 
   if (isLoading) {
@@ -157,12 +184,17 @@ export default function Discover({ onMatch }: DiscoverProps) {
           </Button>
           
           <Button
-            disabled={swipeMutation.isPending}
+            onClick={handleFavorite}
+            disabled={swipeMutation.isPending || favoriteMutation.isPending}
             className={`w-16 h-16 bg-white rounded-full shadow-lg flex items-center justify-center hover:shadow-xl transition-all duration-200 ${
-              swipeMutation.isPending ? 'opacity-50 cursor-not-allowed' : 'hover:bg-blue-50 hover:scale-110'
+              swipeMutation.isPending || favoriteMutation.isPending ? 'opacity-50 cursor-not-allowed' : 'hover:bg-blue-50 hover:scale-110'
             }`}
           >
-            <Star className="h-8 w-8 text-blue-500" />
+            {favoriteMutation.isPending ? (
+              <div className="w-6 h-6 border-2 border-blue-500 border-t-transparent rounded-full animate-spin" />
+            ) : (
+              <Star className="h-8 w-8 text-blue-500" />
+            )}
           </Button>
           
           <Button

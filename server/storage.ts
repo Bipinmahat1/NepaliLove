@@ -184,6 +184,35 @@ export class DatabaseStorage implements IStorage {
     return userMatches;
   }
 
+  // Favorite operations
+  async createFavorite(favorite: InsertFavorite): Promise<Favorite> {
+    const [newFavorite] = await db.insert(favorites).values(favorite).returning();
+    return newFavorite;
+  }
+
+  async removeFavorite(userId: string, favoriteUserId: string): Promise<void> {
+    await db
+      .delete(favorites)
+      .where(and(eq(favorites.userId, userId), eq(favorites.favoriteUserId, favoriteUserId)));
+  }
+
+  async isFavorite(userId: string, favoriteUserId: string): Promise<boolean> {
+    const [favorite] = await db
+      .select()
+      .from(favorites)
+      .where(and(eq(favorites.userId, userId), eq(favorites.favoriteUserId, favoriteUserId)));
+    return !!favorite;
+  }
+
+  async getUserFavorites(userId: string): Promise<Favorite[]> {
+    const userFavorites = await db
+      .select()
+      .from(favorites)
+      .where(eq(favorites.userId, userId))
+      .orderBy(desc(favorites.createdAt));
+    return userFavorites;
+  }
+
   // Conversation operations
   async getOrCreateConversation(user1Id: string, user2Id: string): Promise<Conversation> {
     // Check if conversation already exists

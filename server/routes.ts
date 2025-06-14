@@ -277,6 +277,47 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  // Favorite routes
+  app.post('/api/favorites', isAuthenticated, async (req: any, res) => {
+    try {
+      const userId = req.user.claims.sub;
+      const { favoriteUserId } = req.body;
+      
+      // Skip database operations for demo users
+      if (favoriteUserId.startsWith('demo-user-')) {
+        res.json({ success: true, isFavorite: true });
+        return;
+      }
+      
+      // Check if already favorited
+      const alreadyFavorite = await storage.isFavorite(userId, favoriteUserId);
+      
+      if (alreadyFavorite) {
+        await storage.removeFavorite(userId, favoriteUserId);
+        res.json({ success: true, isFavorite: false });
+      } else {
+        await storage.createFavorite({ userId, favoriteUserId });
+        res.json({ success: true, isFavorite: true });
+      }
+    } catch (error) {
+      console.error("Error processing favorite:", error);
+      res.status(500).json({ message: "Failed to process favorite" });
+    }
+  });
+
+  app.get('/api/favorites/:userId', isAuthenticated, async (req: any, res) => {
+    try {
+      const userId = req.user.claims.sub;
+      const { userId: targetUserId } = req.params;
+      
+      const isFavorite = await storage.isFavorite(userId, targetUserId);
+      res.json({ isFavorite });
+    } catch (error) {
+      console.error("Error checking favorite status:", error);
+      res.status(500).json({ message: "Failed to check favorite status" });
+    }
+  });
+
   // Match routes
   app.get('/api/matches', isAuthenticated, async (req: any, res) => {
     try {
