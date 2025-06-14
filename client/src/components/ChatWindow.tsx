@@ -4,6 +4,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { ArrowLeft, Camera, Smile, Send, MoreVertical } from "lucide-react";
 import { useWebSocket } from "@/hooks/useWebSocket";
+import { useAuth } from "@/hooks/useAuth";
 import { apiRequest } from "@/lib/queryClient";
 import { formatDistanceToNow } from "date-fns";
 
@@ -17,6 +18,11 @@ export default function ChatWindow({ chat, onClose }: ChatWindowProps) {
   const [conversationId, setConversationId] = useState<string | null>(null);
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const queryClient = useQueryClient();
+  const { user } = useAuth();
+  
+  const { data: myProfile } = useQuery({
+    queryKey: ["/api/profile"],
+  });
 
   // Get or create conversation
   const conversationMutation = useMutation({
@@ -103,27 +109,37 @@ export default function ChatWindow({ chat, onClose }: ChatWindowProps) {
       
       {/* Chat Messages */}
       <div className="flex-1 overflow-y-auto px-4 py-6 space-y-4">
-        {messages.map((msg: any) => (
-          <div key={msg.id} className={`flex items-start space-x-2 ${msg.senderId === chat.userId ? 'justify-end' : ''}`}>
-            {msg.senderId !== chat.userId && (
-              <img 
-                src={chat.profile?.photos?.[0] || '/api/placeholder/32/32'} 
-                alt="Profile"
-                className="w-8 h-8 rounded-full object-cover flex-shrink-0"
-              />
-            )}
-            <div className={`max-w-xs px-4 py-2 rounded-2xl ${
-              msg.senderId === chat.userId 
-                ? 'bg-nepal-red text-white rounded-tr-md' 
-                : 'bg-gray-100 text-gray-900 rounded-tl-md'
-            }`}>
-              <p className="text-sm">{msg.content}</p>
-              <p className={`text-xs mt-1 ${msg.senderId === chat.userId ? 'text-red-100' : 'text-gray-500'}`}>
-                {formatDistanceToNow(new Date(msg.createdAt), { addSuffix: true })}
-              </p>
+        {messages.map((msg: any) => {
+          const isMyMessage = msg.senderId === user?.id;
+          return (
+            <div key={msg.id} className={`flex items-start space-x-2 ${isMyMessage ? 'justify-end' : ''}`}>
+              {!isMyMessage && (
+                <img 
+                  src={chat.profile?.photos?.[0] || '/api/placeholder/32/32'} 
+                  alt="Profile"
+                  className="w-8 h-8 rounded-full object-cover flex-shrink-0"
+                />
+              )}
+              <div className={`max-w-xs px-4 py-2 rounded-2xl ${
+                isMyMessage 
+                  ? 'bg-nepal-red text-white rounded-tr-md' 
+                  : 'bg-gray-100 text-gray-900 rounded-tl-md'
+              }`}>
+                <p className="text-sm">{msg.content}</p>
+                <p className={`text-xs mt-1 ${isMyMessage ? 'text-red-100' : 'text-gray-500'}`}>
+                  {isMyMessage ? 'You' : chat.profile?.name} • {formatDistanceToNow(new Date(msg.createdAt), { addSuffix: true })}
+                </p>
+              </div>
+              {isMyMessage && (
+                <img 
+                  src={myProfile?.photos?.[0] || user?.profileImageUrl || '/api/placeholder/32/32'} 
+                  alt="Your profile"
+                  className="w-8 h-8 rounded-full object-cover flex-shrink-0"
+                />
+              )}
             </div>
-          </div>
-        ))}
+          );
+        })}
         <div ref={messagesEndRef} />
       </div>
       

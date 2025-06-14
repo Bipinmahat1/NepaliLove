@@ -1,11 +1,17 @@
+import { useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Settings, Edit, Heart, Bell, Shield, LogOut, ChevronRight } from "lucide-react";
 import { useAuth } from "@/hooks/useAuth";
+import EditProfileModal from "@/components/EditProfileModal";
+import PreferencesModal from "@/components/PreferencesModal";
 
 export default function Profile() {
+  const [showEditProfile, setShowEditProfile] = useState(false);
+  const [showPreferences, setShowPreferences] = useState(false);
   const { user } = useAuth();
+  
   const { data: profile } = useQuery({
     queryKey: ["/api/profile"],
   });
@@ -81,79 +87,96 @@ export default function Profile() {
         
         {/* Profile Actions */}
         <div className="space-y-3">
-          <Card className="hover:bg-gray-50 transition-colors cursor-pointer">
+          <Card 
+            className="hover:bg-gray-50 transition-all duration-200 cursor-pointer hover:shadow-md"
+            onClick={() => setShowEditProfile(true)}
+          >
             <CardContent className="p-0">
               <div className="flex items-center justify-between p-4">
                 <div className="flex items-center space-x-3">
-                  <div className="w-10 h-10 bg-nepal-red/10 rounded-full flex items-center justify-center">
+                  <div className="w-10 h-10 bg-nepal-red/10 rounded-full flex items-center justify-center transition-colors hover:bg-nepal-red/20">
                     <Edit className="h-5 w-5 text-nepal-red" />
                   </div>
                   <span className="font-medium text-gray-900">Edit Profile</span>
                 </div>
-                <ChevronRight className="h-5 w-5 text-gray-400" />
-              </div>
-            </CardContent>
-          </Card>
-          
-          <Card className="hover:bg-gray-50 transition-colors cursor-pointer">
-            <CardContent className="p-0">
-              <div className="flex items-center justify-between p-4">
-                <div className="flex items-center space-x-3">
-                  <div className="w-10 h-10 bg-nepal-pink/10 rounded-full flex items-center justify-center">
-                    <Heart className="h-5 w-5 text-nepal-pink" />
-                  </div>
-                  <span className="font-medium text-gray-900">Dating Preferences</span>
-                </div>
-                <ChevronRight className="h-5 w-5 text-gray-400" />
-              </div>
-            </CardContent>
-          </Card>
-          
-          <Card className="hover:bg-gray-50 transition-colors cursor-pointer">
-            <CardContent className="p-0">
-              <div className="flex items-center justify-between p-4">
-                <div className="flex items-center space-x-3">
-                  <div className="w-10 h-10 bg-blue-100 rounded-full flex items-center justify-center">
-                    <Bell className="h-5 w-5 text-blue-600" />
-                  </div>
-                  <span className="font-medium text-gray-900">Notifications</span>
-                </div>
-                <ChevronRight className="h-5 w-5 text-gray-400" />
-              </div>
-            </CardContent>
-          </Card>
-          
-          <Card className="hover:bg-gray-50 transition-colors cursor-pointer">
-            <CardContent className="p-0">
-              <div className="flex items-center justify-between p-4">
-                <div className="flex items-center space-x-3">
-                  <div className="w-10 h-10 bg-green-100 rounded-full flex items-center justify-center">
-                    <Shield className="h-5 w-5 text-green-600" />
-                  </div>
-                  <span className="font-medium text-gray-900">Privacy & Safety</span>
-                </div>
-                <ChevronRight className="h-5 w-5 text-gray-400" />
+                <ChevronRight className="h-5 w-5 text-gray-400 transition-transform hover:translate-x-1" />
               </div>
             </CardContent>
           </Card>
           
           <Card 
-            className="hover:bg-gray-50 transition-colors cursor-pointer"
+            className="hover:bg-gray-50 transition-all duration-200 cursor-pointer hover:shadow-md"
+            onClick={() => setShowPreferences(true)}
+          >
+            <CardContent className="p-0">
+              <div className="flex items-center justify-between p-4">
+                <div className="flex items-center space-x-3">
+                  <div className="w-10 h-10 bg-nepal-pink/10 rounded-full flex items-center justify-center transition-colors hover:bg-nepal-pink/20">
+                    <Heart className="h-5 w-5 text-nepal-pink" />
+                  </div>
+                  <span className="font-medium text-gray-900">Dating Preferences</span>
+                </div>
+                <ChevronRight className="h-5 w-5 text-gray-400 transition-transform hover:translate-x-1" />
+              </div>
+            </CardContent>
+          </Card>
+          
+          <Card className="hover:bg-gray-50 transition-all duration-200 cursor-pointer hover:shadow-md">
+            <CardContent className="p-0">
+              <div className="flex items-center justify-between p-4">
+                <div className="flex items-center space-x-3">
+                  <div className="w-10 h-10 bg-blue-100 rounded-full flex items-center justify-center transition-colors hover:bg-blue-200">
+                    <Bell className="h-5 w-5 text-blue-600" />
+                  </div>
+                  <span className="font-medium text-gray-900">Notifications</span>
+                </div>
+                <ChevronRight className="h-5 w-5 text-gray-400 transition-transform hover:translate-x-1" />
+              </div>
+            </CardContent>
+          </Card>
+          
+          <Card className="hover:bg-gray-50 transition-all duration-200 cursor-pointer hover:shadow-md">
+            <CardContent className="p-0">
+              <div className="flex items-center justify-between p-4">
+                <div className="flex items-center space-x-3">
+                  <div className="w-10 h-10 bg-green-100 rounded-full flex items-center justify-center transition-colors hover:bg-green-200">
+                    <Shield className="h-5 w-5 text-green-600" />
+                  </div>
+                  <span className="font-medium text-gray-900">Privacy & Safety</span>
+                </div>
+                <ChevronRight className="h-5 w-5 text-gray-400 transition-transform hover:translate-x-1" />
+              </div>
+            </CardContent>
+          </Card>
+          
+          <Card 
+            className="hover:bg-red-50 transition-all duration-200 cursor-pointer hover:shadow-md"
             onClick={handleLogout}
           >
             <CardContent className="p-0">
               <div className="flex items-center justify-between p-4">
                 <div className="flex items-center space-x-3">
-                  <div className="w-10 h-10 bg-red-100 rounded-full flex items-center justify-center">
+                  <div className="w-10 h-10 bg-red-100 rounded-full flex items-center justify-center transition-colors hover:bg-red-200">
                     <LogOut className="h-5 w-5 text-red-600" />
                   </div>
                   <span className="font-medium text-gray-900">Logout</span>
                 </div>
-                <ChevronRight className="h-5 w-5 text-gray-400" />
+                <ChevronRight className="h-5 w-5 text-gray-400 transition-transform hover:translate-x-1" />
               </div>
             </CardContent>
           </Card>
         </div>
+        
+        {/* Modals */}
+        <EditProfileModal 
+          isOpen={showEditProfile} 
+          onClose={() => setShowEditProfile(false)}
+          profile={profile}
+        />
+        <PreferencesModal 
+          isOpen={showPreferences} 
+          onClose={() => setShowPreferences(false)}
+        />
       </div>
     </div>
   );
