@@ -89,6 +89,7 @@ npm test
 ```
 
 ✨ Features
+
 🔐 OTP Auth using phone/email
 
 📸 Upload 5 photos + 1 video
@@ -125,6 +126,7 @@ NepaliLove/
 
 
 🤝 Contributing
+
 Fork the repo
 
 Create a feature branch: git checkout -b feature/new-feature
@@ -135,8 +137,6 @@ Push to GitHub: git push origin feature/new-feature
 
 Open a pull request 🚀
 
-📄 License
-Licensed under the MIT License.
 
 ### 🔝 [Return to Top](#installation)
 
