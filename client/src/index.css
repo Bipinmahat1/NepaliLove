@@ -71,6 +71,10 @@
     background-color: var(--nepal-red);
   }
   
+  .text-nepal-red {
+    color: var(--nepal-red);
+  }
+  
   .nepal-pink {
     color: var(--nepal-pink);
   }
@@ -79,12 +83,20 @@
     background-color: var(--nepal-pink);
   }
   
+  .text-nepal-pink {
+    color: var(--nepal-pink);
+  }
+  
   .nepal-blue {
     color: var(--nepal-blue);
   }
   
   .bg-nepal-blue {
     background-color: var(--nepal-blue);
+  }
+  
+  .text-nepal-blue {
+    color: var(--nepal-blue);
   }
   
   .line-clamp-2 {
