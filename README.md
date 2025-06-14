@@ -55,3 +55,68 @@ Ensure you have the following installed:
 
 ```bash
 git clone https://github.com/bipinmahat1/NepaliLove
+Navigate to Project Directory
+
+bash
+Copy
+Edit
+cd NepaliLove
+Install Dependencies
+
+bash
+Copy
+Edit
+npm install
+Usage
+Start the development server:
+
+bash
+Copy
+Edit
+npm start
+Testing
+To run the test suite (if implemented):
+
+bash
+Copy
+Edit
+npm test
+Project Structure
+bash
+Copy
+Edit
+NepaliLove/
+├── client/              # Frontend (React, Tailwind)
+├── server/              # Backend (Express)
+├── uploads/             # Media storage
+├── schemas/             # DB schemas
+├── .replit              # Replit config
+├── tsconfig.json        # TypeScript config
+└── vite.config.ts       # Build config
+Features
+🔐 OTP-based phone & email authentication
+
+👤 Rich user profiles (bio, photos, preferences)
+
+❤️ Tinder-style swipe matching with animations
+
+💬 Real-time chat with WebSocket (no match required)
+
+⚙️ Admin-ready backend APIs and routes
+
+📱 Fully responsive for mobile & desktop
+
+🎯 Preference-based gender/ethnicity filtering
+
+🌐 Hosted via Replit (or any Node host)
+
+Acknowledgements
+Inspired by Tinder UI and modern dating UX
+
+Built using Replit, Tailwind CSS, React
+
+Icons from Lucide
+
+Chat and real-time powered by WebSockets
+
+🔙 Return
