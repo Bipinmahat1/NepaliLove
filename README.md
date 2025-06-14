@@ -63,7 +63,7 @@ npm install
 
 3. **Set up environment variables:**
 Create a .env file in the root directory and add:
-<pre> ```env DATABASE_URL=your_postgres_connection_string JWT_SECRET=your_secret_key PORT=4000 ``` </pre>
+<pre> env DATABASE_URL=your_postgres_connection_string JWT_SECRET=your_secret_key PORT=4000  </pre>
 🔒 Replace values with your actual DB credentials and secret key.
 
 4. **Start the Database (if needed):**
@@ -137,7 +137,7 @@ Open a pull request 🚀
 📄 License
 Licensed under the MIT License.
 
-🔝 Return to Top
+-🔝 Return to Top
 
 
 
