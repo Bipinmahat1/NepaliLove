@@ -6,10 +6,14 @@ import { Settings, Edit, Heart, Bell, Shield, LogOut, ChevronRight } from "lucid
 import { useAuth } from "@/hooks/useAuth";
 import EditProfileModal from "@/components/EditProfileModal";
 import PreferencesModal from "@/components/PreferencesModal";
+import NotificationsModal from "@/components/NotificationsModal";
+import PrivacyModal from "@/components/PrivacyModal";
 
 export default function Profile() {
   const [showEditProfile, setShowEditProfile] = useState(false);
   const [showPreferences, setShowPreferences] = useState(false);
+  const [showNotifications, setShowNotifications] = useState(false);
+  const [showPrivacy, setShowPrivacy] = useState(false);
   const { user } = useAuth();
   
   const { data: profile } = useQuery({
@@ -121,7 +125,10 @@ export default function Profile() {
             </CardContent>
           </Card>
           
-          <Card className="hover:bg-gray-50 transition-all duration-200 cursor-pointer hover:shadow-md">
+          <Card 
+            className="hover:bg-gray-50 transition-all duration-200 cursor-pointer hover:shadow-md"
+            onClick={() => setShowNotifications(true)}
+          >
             <CardContent className="p-0">
               <div className="flex items-center justify-between p-4">
                 <div className="flex items-center space-x-3">
@@ -135,7 +142,10 @@ export default function Profile() {
             </CardContent>
           </Card>
           
-          <Card className="hover:bg-gray-50 transition-all duration-200 cursor-pointer hover:shadow-md">
+          <Card 
+            className="hover:bg-gray-50 transition-all duration-200 cursor-pointer hover:shadow-md"
+            onClick={() => setShowPrivacy(true)}
+          >
             <CardContent className="p-0">
               <div className="flex items-center justify-between p-4">
                 <div className="flex items-center space-x-3">
@@ -176,6 +186,14 @@ export default function Profile() {
         <PreferencesModal 
           isOpen={showPreferences} 
           onClose={() => setShowPreferences(false)}
+        />
+        <NotificationsModal 
+          isOpen={showNotifications} 
+          onClose={() => setShowNotifications(false)}
+        />
+        <PrivacyModal 
+          isOpen={showPrivacy} 
+          onClose={() => setShowPrivacy(false)}
         />
       </div>
     </div>

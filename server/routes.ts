@@ -222,7 +222,15 @@ export async function registerRoutes(app: Express): Promise<Server> {
       const userId = req.user.claims.sub;
       const { swipedId, action } = req.body;
       
-      // Create swipe record
+      // Skip database operations for demo users
+      if (swipedId.startsWith('demo-user-')) {
+        // Simulate random match for demo users (30% chance)
+        const isMatch = action === 'like' && Math.random() < 0.3;
+        res.json({ success: true, isMatch });
+        return;
+      }
+      
+      // Create swipe record for real users
       await storage.createSwipe({
         swiperId: userId,
         swipedId,
