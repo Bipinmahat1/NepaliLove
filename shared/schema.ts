@@ -76,6 +76,14 @@ export const swipes = pgTable("swipes", {
   createdAt: timestamp("created_at").defaultNow(),
 });
 
+// Favorites/Super likes table
+export const favorites = pgTable("favorites", {
+  id: uuid("id").defaultRandom().primaryKey(),
+  userId: varchar("user_id").references(() => users.id).notNull(),
+  favoriteUserId: varchar("favorite_user_id").references(() => users.id).notNull(),
+  createdAt: timestamp("created_at").defaultNow(),
+});
+
 // Matches when both users like each other
 export const matches = pgTable("matches", {
   id: uuid("id").defaultRandom().primaryKey(),
@@ -109,6 +117,8 @@ export const usersRelations = relations(users, ({ one, many }) => ({
   sentSwipes: many(swipes, { relationName: "swiper" }),
   receivedSwipes: many(swipes, { relationName: "swiped" }),
   sentMessages: many(messages, { relationName: "sender" }),
+  favorites: many(favorites, { relationName: "userFavorites" }),
+  favoritedBy: many(favorites, { relationName: "favoritedUser" }),
 }));
 
 export const profilesRelations = relations(profiles, ({ one }) => ({
@@ -122,6 +132,11 @@ export const preferencesRelations = relations(preferences, ({ one }) => ({
 export const swipesRelations = relations(swipes, ({ one }) => ({
   swiper: one(users, { fields: [swipes.swiperId], references: [users.id], relationName: "swiper" }),
   swiped: one(users, { fields: [swipes.swipedId], references: [users.id], relationName: "swiped" }),
+}));
+
+export const favoritesRelations = relations(favorites, ({ one }) => ({
+  user: one(users, { fields: [favorites.userId], references: [users.id], relationName: "userFavorites" }),
+  favoriteUser: one(users, { fields: [favorites.favoriteUserId], references: [users.id], relationName: "favoritedUser" }),
 }));
 
 export const matchesRelations = relations(matches, ({ one }) => ({
@@ -173,6 +188,8 @@ export type InsertPreferences = z.infer<typeof insertPreferencesSchema>;
 export type Swipe = typeof swipes.$inferSelect;
 export type InsertSwipe = z.infer<typeof insertSwipeSchema>;
 export type Match = typeof matches.$inferSelect;
+export type Favorite = typeof favorites.$inferSelect;
+export type InsertFavorite = typeof favorites.$inferInsert;
 export type Conversation = typeof conversations.$inferSelect;
 export type Message = typeof messages.$inferSelect;
 export type InsertMessage = z.infer<typeof insertMessageSchema>;

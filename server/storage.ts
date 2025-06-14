@@ -6,6 +6,7 @@ import {
   matches,
   conversations,
   messages,
+  favorites,
   type User,
   type UpsertUser,
   type Profile,
@@ -17,6 +18,8 @@ import {
   type Conversation,
   type Message,
   type InsertMessage,
+  type Favorite,
+  type InsertFavorite,
 } from "@shared/schema";
 import { db } from "./db";
 import { eq, and, or, ne, sql, desc } from "drizzle-orm";
@@ -43,6 +46,12 @@ export interface IStorage {
   // Match operations
   createMatch(user1Id: string, user2Id: string): Promise<Match>;
   getUserMatches(userId: string): Promise<Match[]>;
+  
+  // Favorite operations
+  createFavorite(favorite: InsertFavorite): Promise<Favorite>;
+  removeFavorite(userId: string, favoriteUserId: string): Promise<void>;
+  isFavorite(userId: string, favoriteUserId: string): Promise<boolean>;
+  getUserFavorites(userId: string): Promise<Favorite[]>;
   
   // Conversation operations
   getOrCreateConversation(user1Id: string, user2Id: string): Promise<Conversation>;
