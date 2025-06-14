@@ -15,7 +15,7 @@ export default function Discover({ onMatch }: DiscoverProps) {
   const { toast } = useToast();
   const queryClient = useQueryClient();
 
-  const { data: profiles = [], isLoading } = useQuery({
+  const { data: profiles = [], isLoading } = useQuery<any[]>({
     queryKey: ["/api/discover"],
     refetchOnWindowFocus: false,
   });

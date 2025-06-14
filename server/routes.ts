@@ -115,6 +115,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
   app.get('/api/discover', isAuthenticated, async (req: any, res) => {
     try {
       const userId = req.user.claims.sub;
+      const userPreferences = await storage.getPreferences(userId);
       let profiles = await storage.getProfilesForDiscovery(userId);
       
       // If no real profiles available, add demo users for testing
@@ -207,6 +208,27 @@ export async function registerRoutes(app: Express): Promise<Server> {
           },
         ];
         profiles = demoUsers;
+      }
+      
+      // Apply preference filtering
+      if (userPreferences && profiles.length > 0) {
+        profiles = profiles.filter((profile: any) => {
+          // Filter by gender preference
+          if (userPreferences.preferredGender && profile.gender !== userPreferences.preferredGender) {
+            return false;
+          }
+          
+          // Filter by age range
+          if (userPreferences.minAge && profile.age < userPreferences.minAge) {
+            return false;
+          }
+          
+          if (userPreferences.maxAge && profile.age > userPreferences.maxAge) {
+            return false;
+          }
+          
+          return true;
+        });
       }
       
       res.json(profiles);
