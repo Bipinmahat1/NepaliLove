@@ -145,14 +145,22 @@ export default function Discover({ onMatch }: DiscoverProps) {
           <Button
             onClick={() => handleSwipe('pass')}
             disabled={swipeMutation.isPending}
-            className="w-16 h-16 bg-white rounded-full shadow-lg flex items-center justify-center hover:shadow-xl transition-all hover:bg-gray-50"
+            className={`w-16 h-16 bg-white rounded-full shadow-lg flex items-center justify-center hover:shadow-xl transition-all duration-200 ${
+              swipeMutation.isPending ? 'opacity-50 cursor-not-allowed' : 'hover:bg-gray-50 hover:scale-110'
+            }`}
           >
-            <X className="h-8 w-8 text-gray-500" />
+            {swipeMutation.isPending ? (
+              <div className="w-6 h-6 border-2 border-gray-400 border-t-transparent rounded-full animate-spin" />
+            ) : (
+              <X className="h-8 w-8 text-gray-500" />
+            )}
           </Button>
           
           <Button
             disabled={swipeMutation.isPending}
-            className="w-16 h-16 bg-white rounded-full shadow-lg flex items-center justify-center hover:shadow-xl transition-all hover:bg-gray-50"
+            className={`w-16 h-16 bg-white rounded-full shadow-lg flex items-center justify-center hover:shadow-xl transition-all duration-200 ${
+              swipeMutation.isPending ? 'opacity-50 cursor-not-allowed' : 'hover:bg-blue-50 hover:scale-110'
+            }`}
           >
             <Star className="h-8 w-8 text-blue-500" />
           </Button>
@@ -160,9 +168,15 @@ export default function Discover({ onMatch }: DiscoverProps) {
           <Button
             onClick={() => handleSwipe('like')}
             disabled={swipeMutation.isPending}
-            className="w-16 h-16 bg-white rounded-full shadow-lg flex items-center justify-center hover:shadow-xl transition-all hover:bg-gray-50"
+            className={`w-16 h-16 bg-white rounded-full shadow-lg flex items-center justify-center hover:shadow-xl transition-all duration-200 ${
+              swipeMutation.isPending ? 'opacity-50 cursor-not-allowed' : 'hover:bg-red-50 hover:scale-110'
+            }`}
           >
-            <Heart className="h-8 w-8 text-nepal-red" />
+            {swipeMutation.isPending ? (
+              <div className="w-6 h-6 border-2 border-nepal-red border-t-transparent rounded-full animate-spin" />
+            ) : (
+              <Heart className="h-8 w-8 text-nepal-red" />
+            )}
           </Button>
         </div>
       </div>
