@@ -146,7 +146,7 @@ export default function Discover({ onMatch }: DiscoverProps) {
       
       <div className="relative px-4 py-6">
         {/* Swipe Cards Stack */}
-        <div className="relative h-96 max-w-sm mx-auto">
+        <div className="relative h-[500px] w-full max-w-sm mx-auto px-4 sm:px-0">
           {/* Background cards */}
           {profiles.slice(currentIndex + 1, currentIndex + 3).map((_, index) => (
             <div 
