@@ -8,6 +8,7 @@ import {
   integer,
   boolean,
   uuid,
+  date,
 } from "drizzle-orm/pg-core";
 import { createInsertSchema } from "drizzle-zod";
 import { z } from "zod";
@@ -40,7 +41,7 @@ export const profiles = pgTable("profiles", {
   id: uuid("id").defaultRandom().primaryKey(),
   userId: varchar("user_id").references(() => users.id).notNull(),
   name: varchar("name").notNull(),
-  age: integer("age").notNull(),
+  birthdate: date("birthdate").notNull(),
   gender: varchar("gender").notNull(),
   ethnicity: varchar("ethnicity"),
   religion: varchar("religion"),
@@ -49,6 +50,8 @@ export const profiles = pgTable("profiles", {
   location: varchar("location"),
   photos: text("photos").array().default([]),
   videoUrl: varchar("video_url"),
+  verificationPhoto: varchar("verification_photo"),
+  isVerified: boolean("is_verified").default(false),
   isActive: boolean("is_active").default(true),
   createdAt: timestamp("created_at").defaultNow(),
   updatedAt: timestamp("updated_at").defaultNow(),
@@ -155,11 +158,33 @@ export const messagesRelations = relations(messages, ({ one }) => ({
   sender: one(users, { fields: [messages.senderId], references: [users.id], relationName: "sender" }),
 }));
 
+// Blocked users table
+export const blockedUsers = pgTable("blocked_users", {
+  id: uuid("id").defaultRandom().primaryKey(),
+  blockerId: varchar("blocker_id").references(() => users.id).notNull(),
+  blockedId: varchar("blocked_id").references(() => users.id).notNull(),
+  reason: text("reason"),
+  createdAt: timestamp("created_at").defaultNow(),
+});
+
+// Reports table
+export const reports = pgTable("reports", {
+  id: uuid("id").defaultRandom().primaryKey(),
+  reporterId: varchar("reporter_id").references(() => users.id).notNull(),
+  reportedId: varchar("reported_id").references(() => users.id).notNull(),
+  reason: varchar("reason").notNull(),
+  description: text("description"),
+  status: varchar("status").default("pending"),
+  createdAt: timestamp("created_at").defaultNow(),
+});
+
 // Insert schemas
 export const insertProfileSchema = createInsertSchema(profiles).omit({
   id: true,
   createdAt: true,
   updatedAt: true,
+}).extend({
+  birthdate: z.string().min(1, "Date of birth is required"),
 });
 
 export const insertPreferencesSchema = createInsertSchema(preferences).omit({

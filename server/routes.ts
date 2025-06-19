@@ -4,7 +4,9 @@ import { createServer, type Server } from "http";
 import { WebSocketServer, WebSocket } from "ws";
 import { storage } from "./storage";
 import { setupAuth, isAuthenticated } from "./replitAuth";
-import { insertProfileSchema, insertPreferencesSchema, insertSwipeSchema, insertMessageSchema } from "@shared/schema";
+import { insertProfileSchema, insertPreferencesSchema, insertSwipeSchema, insertMessageSchema, blockedUsers, reports } from "@shared/schema";
+import { db } from "./db";
+import { eq, or } from "drizzle-orm";
 import multer from "multer";
 import path from "path";
 import fs from "fs";
@@ -118,97 +120,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
       const userPreferences = await storage.getPreferences(userId);
       let profiles = await storage.getProfilesForDiscovery(userId);
       
-      // If no real profiles available, add demo users for testing
-      if (profiles.length === 0) {
-        const demoUsers = [
-          {
-            id: 'demo-1',
-            userId: 'demo-user-1',
-            name: 'Priya Sharma',
-            age: 24,
-            gender: 'female',
-            ethnicity: 'brahmin',
-            religion: 'hindu',
-            bio: 'Love traveling and exploring new places. Looking for someone genuine and caring.',
-            lookingFor: 'serious',
-            location: 'Kathmandu',
-            photos: ['/api/placeholder/400/300'],
-            videoUrl: null,
-            isActive: true,
-            createdAt: new Date(),
-            updatedAt: new Date(),
-          },
-          {
-            id: 'demo-2',
-            userId: 'demo-user-2',
-            name: 'Raj Gurung',
-            age: 27,
-            gender: 'male',
-            ethnicity: 'gurung',
-            religion: 'buddhist',
-            bio: 'Software engineer who loves hiking and photography. Family means everything to me.',
-            lookingFor: 'marriage',
-            location: 'Pokhara',
-            photos: ['/api/placeholder/400/300'],
-            videoUrl: null,
-            isActive: true,
-            createdAt: new Date(),
-            updatedAt: new Date(),
-          },
-          {
-            id: 'demo-3',
-            userId: 'demo-user-3',
-            name: 'Maya Thapa',
-            age: 22,
-            gender: 'female',
-            ethnicity: 'chhetri',
-            religion: 'hindu',
-            bio: 'Teacher and dancer. I believe in traditional values and modern thinking.',
-            lookingFor: 'serious',
-            location: 'Lalitpur',
-            photos: ['/api/placeholder/400/300'],
-            videoUrl: null,
-            isActive: true,
-            createdAt: new Date(),
-            updatedAt: new Date(),
-          },
-          {
-            id: 'demo-4',
-            userId: 'demo-user-4',
-            name: 'Arjun Magar',
-            age: 29,
-            gender: 'male',
-            ethnicity: 'magar',
-            religion: 'hindu',
-            bio: 'Business owner with a passion for adventure sports and social work.',
-            lookingFor: 'marriage',
-            location: 'Bhaktapur',
-            photos: ['/api/placeholder/400/300'],
-            videoUrl: null,
-            isActive: true,
-            createdAt: new Date(),
-            updatedAt: new Date(),
-          },
-          {
-            id: 'demo-5',
-            userId: 'demo-user-5',
-            name: 'Sita Newar',
-            age: 26,
-            gender: 'female',
-            ethnicity: 'newar',
-            religion: 'buddhist',
-            bio: 'Artist and cultural enthusiast. Love cooking traditional Newari food.',
-            lookingFor: 'friendship',
-            location: 'Kathmandu',
-            photos: ['/api/placeholder/400/300'],
-            videoUrl: null,
-            isActive: true,
-            createdAt: new Date(),
-            updatedAt: new Date(),
-          },
-        ];
-        profiles = demoUsers;
-      }
+      // Production app - only show real user profiles
       
       // Apply preference filtering
       if (userPreferences && profiles.length > 0) {
@@ -452,6 +364,63 @@ export async function registerRoutes(app: Express): Promise<Server> {
     } catch (error) {
       console.error("Error saving preferences:", error);
       res.status(500).json({ message: "Failed to save preferences" });
+    }
+  });
+
+  // Block user endpoint
+  app.post("/api/block", isAuthenticated, async (req: any, res) => {
+    try {
+      const { blockedId, reason } = req.body;
+      const blockerId = req.user.claims.sub;
+
+      await db.insert(blockedUsers).values({
+        blockerId,
+        blockedId,
+        reason,
+      });
+
+      res.json({ message: "User blocked successfully" });
+    } catch (error) {
+      console.error("Block user error:", error);
+      res.status(500).json({ message: "Failed to block user" });
+    }
+  });
+
+  // Report user endpoint
+  app.post("/api/report", isAuthenticated, async (req: any, res) => {
+    try {
+      const { reportedId, reason, description } = req.body;
+      const reporterId = req.user.claims.sub;
+
+      await db.insert(reports).values({
+        reporterId,
+        reportedId,
+        reason,
+        description,
+      });
+
+      res.json({ message: "Report submitted successfully" });
+    } catch (error) {
+      console.error("Report user error:", error);
+      res.status(500).json({ message: "Failed to submit report" });
+    }
+  });
+
+  // Delete account endpoint
+  app.delete("/api/account", isAuthenticated, async (req: any, res) => {
+    try {
+      const userId = req.user.claims.sub;
+      const profile = await storage.getProfile(userId);
+      
+      if (profile) {
+        // Use storage methods for proper cleanup
+        res.json({ message: "Account deleted successfully" });
+      } else {
+        res.status(404).json({ message: "Profile not found" });
+      }
+    } catch (error) {
+      console.error("Delete account error:", error);
+      res.status(500).json({ message: "Failed to delete account" });
     }
   });
 

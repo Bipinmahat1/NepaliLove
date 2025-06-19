@@ -5,6 +5,7 @@ import { Sliders, Heart, X, Star } from "lucide-react";
 import SwipeCard from "@/components/SwipeCard";
 import { useToast } from "@/hooks/use-toast";
 import { apiRequest } from "@/lib/queryClient";
+import { useSoundEffects } from "@/hooks/useSoundEffects";
 
 interface DiscoverProps {
   onMatch: (matchData: any) => void;
@@ -13,6 +14,7 @@ interface DiscoverProps {
 export default function Discover({ onMatch }: DiscoverProps) {
   const [currentIndex, setCurrentIndex] = useState(0);
   const { toast } = useToast();
+  const { playSwipeSound, playMatchSound } = useSoundEffects();
   const queryClient = useQueryClient();
 
   const { data: profiles = [], isLoading } = useQuery<any[]>({
@@ -21,7 +23,7 @@ export default function Discover({ onMatch }: DiscoverProps) {
   });
 
   const swipeMutation = useMutation({
-    mutationFn: async ({ swipedId, action }: { swipedId: string; action: string }) => {
+    mutationFn: async ({ swipedId, action }: { swipedId: string; action: 'like' | 'pass' }) => {
       const response = await apiRequest("POST", "/api/swipe", { swipedId, action });
       return response.json();
     },
@@ -35,6 +37,13 @@ export default function Discover({ onMatch }: DiscoverProps) {
       }
       
       // Move to next card
+      // Play appropriate sound effect
+      playSwipeSound(variables.action as 'like' | 'pass');
+      
+      if (data.isMatch) {
+        playMatchSound();
+      }
+      
       setCurrentIndex(prev => prev + 1);
       
       // Refetch profiles if we're running low
